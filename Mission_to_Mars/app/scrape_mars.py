@@ -37,7 +37,6 @@ def mars_news(browser):
     soup = bs(html, 'html.parser')
 
     slide = soup.find('li', class_='slide')
-
     news_title = slide.find("div", class_='content_title').text
     news_p = slide.find("div", class_='article_teaser_body').text
 
@@ -53,8 +52,8 @@ def featured_image(browser):
     soup = bs(html, 'html.parser')
 
     s = soup.find('article', class_='carousel_item')['style']
-    img_url = 'https://www.jpl.nasa.gov' + \
-        s[(s.find("('") + len("('")): s.find("')")]
+
+    img_url = 'https://www.jpl.nasa.gov' + s[(s.find("('") + len("('")): s.find("')")]
 
     return img_url
 
@@ -62,14 +61,13 @@ def featured_image(browser):
 def hemispheres(browser):
 
     url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
-
     browser.visit(url)
     browser.is_element_present_by_css("div.description", wait_time=3)
 
     html = browser.html
     soup = bs(html, 'html.parser')
 
-    links = soup.find_all('a', class_='itemLink product-item')
+    links = soup.find_all('a', class_ ='itemLink product-item')
 
     link_list = []
 
@@ -78,25 +76,23 @@ def hemispheres(browser):
 
     link_list = list(set(link_list))
 
-
     def contains_word(t):
         return t and 'Sample' in t
-
 
     hemisphere_image_urls = []
 
     for link in link_list:
-
-        browser.visit('https://astrogeology.usgs.gov/' + link)
+        
+        browser.visit('https://astrogeology.usgs.gov/' +link)
         browser.is_element_present_by_css("div.ul.li", wait_time=1)
 
         html = browser.html
         soup = bs(html, 'html.parser')
-        link = soup.find('a', text=contains_word)
-
+        link = soup.find('a', text = contains_word)
+        
         title = soup.head.title.text
-        title = title[0:title.find(" |")]
-
+        title = title[0:title.find(" |")] 
+        
         Dict = {"title": title, "img_url": link.get('href')}
         hemisphere_image_urls.append(Dict)
 
@@ -107,7 +103,7 @@ def twitter_weather(browser):
 
     url = 'https://twitter.com/marswxreport?lang=en'
     browser.visit(url)
-    browser.is_element_present_by_css("div.aria-label", wait_time=3)
+    browser.is_element_present_by_css("div.aria-label", wait_time=5)
 
     html = browser.html
     soup = bs(html, 'html.parser')
@@ -117,10 +113,13 @@ def twitter_weather(browser):
     def contains_word(t):
         return t and 'InSight sol' in t
 
-    mars_weather = main.find('span', text=contains_word).text
+
+    try:
+        mars_weather = main.find('span', text=contains_word).text
+    except AttributeError:
+        return None
 
     return mars_weather
-
 
 
 def mars_facts():
